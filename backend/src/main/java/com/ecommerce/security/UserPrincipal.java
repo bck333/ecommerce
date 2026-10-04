@@ -21,7 +21,6 @@ public class UserPrincipal implements UserDetails {
     private final String password;
     private final Role role;
     private final boolean active;
-    @lombok.Getter(lombok.AccessLevel.NONE)
     private final Collection<? extends GrantedAuthority> authorities;
 
     public static UserPrincipal create(User user) {
@@ -37,15 +36,6 @@ public class UserPrincipal implements UserDetails {
         );
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
 
     @Override
     public String getUsername() {
