@@ -1,0 +1,74 @@
+package com.ecommerce.security;
+
+import com.ecommerce.user.entity.User;
+import com.ecommerce.user.enums.Role;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
+
+@Getter
+@AllArgsConstructor
+public class UserPrincipal implements UserDetails {
+
+    private final Long id;
+    private final String mobileNumber;
+    private final String email;
+    private final String password;
+    private final Role role;
+    private final boolean active;
+    @lombok.Getter(lombok.AccessLevel.NONE)
+    private final Collection<? extends GrantedAuthority> authorities;
+
+    public static UserPrincipal create(User user) {
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
+        return new UserPrincipal(
+                user.getId(),
+                user.getMobileNumber(),
+                user.getEmail(),
+                user.getPasswordHash(),
+                user.getRole(),
+                user.isActive(),
+                Collections.singletonList(authority)
+        );
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return mobileNumber;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return active;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return active;
+    }
+}
